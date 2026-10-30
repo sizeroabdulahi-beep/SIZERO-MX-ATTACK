@@ -1,0 +1,130 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Sizero CyberGuard</title>
+<style>
+*{box-sizing:border-box}
+body{
+ margin:0;background:#080d16;color:#e7edf7;
+ font-family:Arial,sans-serif
+}
+header{
+ padding:22px 7%;border-bottom:1px solid #202b3b;
+ display:flex;justify-content:space-between;align-items:center
+}
+.logo{color:#27e0a0;font-size:22px;font-weight:bold}
+main{max-width:1100px;margin:45px auto;padding:20px}
+h1{font-size:34px}
+.sub{color:#8e9bae}
+.grid{
+ display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));
+ gap:18px;margin-top:30px
+}
+.card{
+ background:#111b2a;border:1px solid #253349;
+ border-radius:12px;padding:22px
+}
+.card h3{color:#27e0a0}
+input,textarea{
+ width:100%;padding:13px;margin:10px 0;
+ background:#080f1c;border:1px solid #35445c;
+ color:white;border-radius:7px
+}
+button{
+ background:#16bd86;color:#04140e;
+ border:0;padding:12px 18px;border-radius:7px;
+ font-weight:bold;cursor:pointer
+}
+.result{margin-top:15px;color:#27e0a0;overflow-wrap:anywhere}
+footer{text-align:center;padding:30px;color:#8290a3}
+</style>
+</head>
+<body>
+<header>
+ <div class="logo">◈ SIZERO CYBERGUARD</div>
+ <span>PERSONAL SECURITY</span>
+</header>
+<main>
+ <h1>Security Investigation Dashboard</h1>
+ <p class="sub">Your personal cybersecurity workspace.</p>
+
+ <div class="grid">
+  <section class="card">
+   <h3>01 / Link Inspector</h3>
+   <p>Check a URL for common suspicious characteristics.</p>
+   <input id="url" placeholder="Paste a suspicious URL">
+   <button onclick="checkURL()">Inspect link</button>
+   <div class="result" id="urlResult"></div>
+  </section>
+
+  <section class="card">
+   <h3>02 / Incident Tracker</h3>
+   <p>Record suspicious activity on your accounts.</p>
+   <textarea id="incident" placeholder="Describe what happened..."></textarea>
+   <button onclick="saveIncident()">Save incident</button>
+   <div class="result" id="incidentResult"></div>
+  </section>
+
+  <section class="card">
+   <h3>03 / Security Checklist</h3>
+   <p>Account protection tasks.</p>
+   <label><input type="checkbox"> Change password</label><br>
+   <label><input type="checkbox"> Enable 2FA</label><br>
+   <label><input type="checkbox"> Review active sessions</label><br>
+   <label><input type="checkbox"> Secure email account</label>
+  </section>
+
+  <section class="card">
+   <h3>04 / Security Report</h3>
+   <p>Download your incident notes.</p>
+   <button onclick="downloadReport()">Download report</button>
+   <div class="result" id="reportResult"></div>
+  </section>
+ </div>
+</main>
+<footer>SIZERO CYBERGUARD · Learn. Protect. Secure.</footer>
+
+<script>
+let incidents=[];
+
+function checkURL(){
+ const value=document.getElementById('url').value.trim();
+ const output=document.getElementById('urlResult');
+ try{
+  const u=new URL(value);
+  let warnings=[];
+  if(u.protocol!=="https:")warnings.push("Not using HTTPS");
+  if(u.username||u.password)warnings.push("Contains embedded credentials");
+  if(u.hostname.includes("xn--"))warnings.push("Uses internationalized domain encoding");
+  output.textContent=warnings.length?
+   "Warning: "+warnings.join(" | "):
+   "No basic warning detected. This does NOT mean the link is safe.";
+ }catch(e){
+  output.textContent="Please enter a valid URL.";
+ }
+}
+
+function saveIncident(){
+ const value=document.getElementById('incident').value.trim();
+ if(!value)return;
+ incidents.push(new Date().toLocaleString()+" - "+value);
+ document.getElementById('incidentResult').textContent="Incident recorded.";
+ document.getElementById('incident').value="";
+}
+
+function downloadReport(){
+ const report="SIZERO CYBERGUARD INCIDENT REPORT\n\n"+
+ incidents.join("\n")+"\n\nKeep this report private.";
+ const blob=new Blob([report],{type:"text/plain"});
+ const a=document.createElement("a");
+ a.href=URL.createObjectURL(blob);
+ a.download="cyberguard-report.txt";
+ a.click();
+ URL.revokeObjectURL(a.href);
+}
+</script>
+</body>
+</html>
